@@ -15,6 +15,15 @@ app.use(
   })
 );
 
+app.get("/auth", (req, res) => {
+  const authUrl =
+    `${process.env.LOGIN_URL}/services/oauth2/authorize` +
+    `?response_type=code` +
+    `&client_id=${process.env.CLIENT_ID}` +
+    `&redirect_uri=${process.env.REDIRECT_URI}`;
+
+  res.redirect(authUrl);
+});
 app.use(express.json());
 
 app.use(session({
