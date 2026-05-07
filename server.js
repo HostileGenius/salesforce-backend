@@ -77,46 +77,7 @@ app.get("/login", (req, res) => {
 /*
     OAuth Callback Route
 */
-app.get("/callback", async (req, res) => {
 
-    const code = req.query.code;
-
-    const codeVerifier = req.session.codeVerifier;
-
-    try {
-
-        const tokenResponse = await axios.post(
-            `${process.env.LOGIN_URL}/services/oauth2/token`,
-            null,
-            {
-                params: {
-                    grant_type: "authorization_code",
-                    client_id: process.env.CLIENT_ID,
-                    client_secret: process.env.CLIENT_SECRET,
-                    redirect_uri: process.env.REDIRECT_URI,
-                    code: code,
-                    code_verifier: codeVerifier
-                }
-            }
-        );
-
-        const data = tokenResponse.data;
-
-        res.json({
-            message: "Login Successful",
-            access_token: data.access_token,
-            instance_url: data.instance_url
-        });
-
-    } catch (error) {
-
-        console.log(error.response?.data || error.message);
-
-        res.status(500).json({
-            error: "OAuth Failed"
-        });
-    }
-});
 app.get("/validation-rules", async (req, res) => {
   try {
     const accessToken = req.query.access_token;
@@ -187,6 +148,34 @@ app.post("/toggle-rule", async (req, res) => {
   }
 });
 
+app.get("/callback", async (req, res) => {
+  const code = req.query.code;
+
+  try {
+    const tokenResponse = await axios.post(
+      "https://login.salesforce.com/services/oauth2/token",
+      null,
+      {
+        params: {
+          grant_type: "authorization_code",
+          client_id: process.env.CLIENT_ID,
+          client_secret: process.env.CLIENT_SECRET,
+          redirect_uri: `${process.env.BACKEND_URL}/callback`,
+          code,
+        },
+      }
+    );
+
+    const { access_token, instance_url } = tokenResponse.data;
+
+    res.redirect(
+      `${process.env.FRONTEND_URL}/?access_token=${access_token}&instance_url=${instance_url}`
+    );
+  } catch (error) {
+    console.log(error.response?.data || error.message);
+    res.send("OAuth failed");
+  }
+});
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });
