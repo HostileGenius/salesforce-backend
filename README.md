@@ -1,14 +1,11 @@
-## Environment Variables
+Environment Variables Required
 
-Create a `.env` file inside `salesforce-backend` and add:
-
-```env
-CLIENT_ID=YOUR_CLIENT_ID
-CLIENT_SECRET=YOUR_CLIENT_SECRET
-REDIRECT_URI=http://localhost:5000/callback
-LOGIN_URL=https://login.salesforce.com
-```
-
+CLIENT_ID=
+CLIENT_SECRET=
+LOGIN_URL=
+REDIRECT_URI=
+FRONTEND_URL=
+BACKEND_URL=
 Frontend:
 https://salesforce-frontend-task.vercel.app
 
